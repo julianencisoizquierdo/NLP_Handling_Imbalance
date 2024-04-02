@@ -1,11 +1,22 @@
 # Handling an Imbalanced Dataset with NLP
 
 ## Content of the project
-We are expected to review the issue of an imbalanced dataset. 
+We are provided with the 'Java Development Tools Bug Dataset', whose attributes provide information about the reported bugs in a software development project. The bugs can be either P1, P2, P3, P4 or P5 types.
+
+The dataset is imbalanced; the P3 type bugs amount to close to 90% of the cases. The goal of this project is to deal with this imbalance.
 
 
 ## Instructions
-The main file used for the analysis is `eclipse_jdt.csv`. 
+The main file used for the analysis is `eclipse_jdt.csv`. The columns contained there are:
+- Issue_id
+- Priority
+- Component
+- Duplicated_issue
+- Title	Description	Status
+- Resolution
+- Version
+- Created_time
+- Resolved_time
 
 
 ## Rationale and Methodology
