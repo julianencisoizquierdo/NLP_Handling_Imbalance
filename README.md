@@ -1,4 +1,4 @@
-# Handling an Imbalanced Dataset with NLP
+# Handling an Imbalanced Bugs Dataset with Python
 
 ## Content of the project
 We are provided with the 'Java Development Tools Bug Dataset', whose attributes provide information about the reported bugs in a software development project. The bugs can be either P1, P2, P3, P4 or P5 types.
