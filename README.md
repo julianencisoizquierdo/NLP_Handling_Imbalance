@@ -3,7 +3,7 @@
 ## Content of the project
 We are provided with the 'Java Development Tools Bug Dataset', whose attributes provide information about the reported bugs in a software development project. The bugs can be either P1, P2, P3, P4 or P5 types.
 
-The dataset is imbalanced; the P3-type bugs amount to close to 90% of the cases. The goal of this project is to deal with this imbalance.
+The dataset is imbalanced; the P3-type bugs amount to close to 90% of the cases. The goal of this project is to handle or mitigate this class imbalance. 
 
 
 ## Instructions
