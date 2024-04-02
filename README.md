@@ -25,26 +25,24 @@ The main file used for the analysis is `eclipse_jdt.csv`. The columns contained 
 
 ### Step 1: Recode the outcome into a binary variables
 
-After importing the dataset, we start by pulling its first few rows and information, so as to get an idea of the data we are working with. The Duplicated_issue column has many missing values and will not be useful later on, so we drop this column.
+After importing the dataset, we start by pulling its first few rows and information, so as to get an idea of the data we are working with. We notice that the `Duplicated_issue` column has many missing values. It will thus not be useful later on, so we drop this column.
 
-We will use the priority level as the outcome variable, however it currently has multiple possible values. We change it into 2 categories: P3, or else. To do so, we use a lambda function on the Priority column which keeps “P3” as a value if it is already “P3”, and for any other values changes it to “else”. 
+We will use the priority level as the outcome variable, although it currently has multiple possible values. We change it into 2 categories: P3, or else. To do so, we use a lambda function on the `Priority` column which keeps “P3” as a value if it is already “P3”, and changes all the other values to “else”. 
 
 We check whether this worked properly by counting the values of each possible priority level, and we see then that the dataset is highly imbalanced with 88% of the observations having a P3 priority.
 
-Next, we concatenate the Title and Description columns into a single Text column, and drop the Title and Description columns. This way, we will only have one column with all text to be analyzed. Then, we clean this new column, using the Clean function from the preparation module, and only keep clean text with more than 20 characters.
+Next, we concatenate the `Title` and `Description` columns into a single `Text` column. We then drop the `Title` and `Description` columns. This way, we will only have one column with all text to be analyzed. Then, we clean this new column, using the Clean function from the preparation module, and only keep clean text with more than 20 characters.
 
 Finally, we split our dataset into test and training samples. We use 80% of the data as a training set and hold out the remaining 20% into a test set. We use the stratify argument to keep the original class distribution (88% of P3) in the training and test sets. We see that we have over 36k observations in the training set and over 9k observations in the test set.
 
 ### Step 2: Vectorization
 
-We decide to use TF-IDF vectorization on the training sample, by using the TfidfVectorizer. This is because our dataset is composed of a Text for each observation, and we have thousands of observations. We thus want to consider not only how important a certain term is in the observed document (Text of that observation), but also we want to account for its frequency in the entire corpus (the set of observations).
+We decide to use TF-IDF vectorization on the training sample. We want to consider not only how important a certain term is in the observed document, but we also want to account for its frequency in the entire corpus.
 
-We use the vectorizer and not the transformer, as it combines in a single operation both the text tokenization and the TF-IDF scores. This way, it streamlines the pipeline.
-As settings for the TfidfVectorizer, we only keep tokens that have a frequency of more than 10, we include bigrams and we use the usual english stopwords.
+We only keep tokens that have a frequency of more than 10 when using the TfidfVectorizer. We also include bigrams and we use the usual english stopwords.
 
 ### Step 3: Build reference results
 
-As we will assess our models against the held out test set, we first also vectorize java_X_test.
 We build a trivial classifier, which will always predict the majority class (P3), that we later use as a baseline to assess the other models. To do so, we use the DummyClassifier and apply the “most frequent” strategy. We then use this trivial classifier to predict the baseline Y, by applying our model to the vectorized test set.
 
 We then choose five other machine learning classifiers to train and evaluate against the trivial classifier:
@@ -54,25 +52,11 @@ We then choose five other machine learning classifiers to train and evaluate aga
 - Random Forest,
 - Gradient Boosting Classifier.
 
-We select a KNN model, as it is a simple non-parametric classification technique (Putatunda, 2019), and it is regarded as among the best algorithms in data mining (Mucherino et al., 2009; Steinbach & Tan, 2009; Zhang, 2022). However, this algorithm does not explicitly learn classification, but rather finds the k most similar examples in the training set based on the defined measure (Pereira et al., 2009), in our case k = 5 and the metric is the Euclidean distance.
-
-We choose SVM as it is a popular model in classification tasks for its generalization performance (Yue et al., 2003). It has been compared to other classification models and shows similar performance overall (Colas & Brazdil, 2006). It works by separating the data points in classes, through a decision boundary (Pereira et al., 2009).
-
-Another linear classifier that we choose is the Logistic Regression, which is an algorithm that can be used in the case of binary classification and has shown better performance than other models in some datasets (Hassan et al., 2022).
-
-Next, we run a Random Forest algorithm, as its accuracy on binary classification has been adduced by many (Buckinx & Van den Poel, 2005; Lunetta et al., 2004; Schwender et al., 2004). It is an ensemble method designed to remedy the issue of robustness in Decision Trees.
-
-Finally, we execute a Gradient Boosting Classifier, an ensemble method that can be used with small amounts of data (Islam Khan et al., 2022). It has also been compared to the previously mentioned algorithm in certain studies and shown better results (Chakrabarty et al., 2019; Islam Khan et al., 2022).
-
-For all these algorithms, we first instantiate the model, then fit them on our training set and before using them to do predictions on our test set.
-
-Once we have the predictions from all the models, we run the required metrics to assess the models against each other. Please find a summary of the performance of the selected models per metric in the following table. In green is the best and in red the worst scorer per metric.
-
-The Gradient Boosting Classifier shows the best performance for all the metrics, so is the best model in this case. The Trivial Classifier has the worst score on all metrics but the F1-score, where the K-Nearest Neighbor is 0.0001 below, we still conclude that all the models perform better than a dummy model.
+Once we have the predictions from all the models, we run the required metrics to assess the models against each other. The Gradient Boosting Classifier shows the best performance for all the metrics, so is the best model in this case. The Trivial Classifier has the worst score on all metrics but the F1-score, where the K-Nearest Neighbor is 0.0001 below.
 
 ### Step 4: Undersampling the majority class
 
-As one solution to address the problem of the imbalanced classes, we undersample the majority class, so it has the same number of observations as the minority class.
+One potential solution to the problem of the imbalanced classes is to undersample the majority class. We proceed to do that, so that the majority class now has the same number of observations as the minority class.
 
 To do so, we first create a majority and a minority dataframes, that hold only observations with “P3” and “else” priorities respectively. This allows us to treat the majority and minority classes differently later on. We then use the resample function from the Scikit-Learn package to perform sampling without replacement of the majority class. The objective is to create a sample of the majority class that is the same size as the minority class, randomly. Once we have this sample of the majority class called undersampled_majority, we concatenate it with the entire minority class observations, to obtain a new dataset, undersampled_java, which has 50% of “P3” observations and 50% of “else” observations.
 
@@ -82,20 +66,20 @@ While the Gradient Boosting Classifier was the best model in the original set, i
 
 ### Step 5: Oversampling the minority class
 
-Next, we explore another solution to the class imbalance problem, oversampling the minority class. In this step, we will duplicate the observations in the minority class to obtain the same size of both classes.
+Next, we explore another solution to the class imbalance problem: oversampling the minority class. In this step, we will duplicate the observations in the minority class to obtain the same size of both classes.
 
 To determine how much we need to duplicate the minority class, we calculate the ratio of majority to minority observations using an integer division. We then create a duplicated_minority dataframe by concatenating minority to itself as many times as the ratio we previously calculated. We then concatenate this duplicated_minority dataframe to the majority dataframe to get our oversampled_java.
 
 Afterwards, we split our oversampled_java into 80% train set and 20% test set, again stratifying to ensure the even class distribution is kept. These two sets are vectorized and we use our vectorized oversampled train set to fit our models. Finally, we use the fitted models to predict Y and compute the assessment metrics.
 
-With oversampling the minority class, the best performing model, with the top score in all metrics, is the Random Forest, followed by the SVM. Like previously, the Trivial Classifier continues to perform the worst, indicating that all models perform better than a dummy model.
+With oversampling the minority class, the best performing model is the Random Forest. This model has the best performance in all metrics. The Random Forest is then followed by the SVM. Like previously, the Trivial Classifier continues to perform the worst, indicating that all models perform better than a dummy model.
 
 
 ### Step 6: SMOTE
 
-SMOTE refers to Synthetic Minority Oversampling Technique, and it is another technique to oversample the minority class. Instead of simply duplicating the minority data which can lead to overfitting, SMOTE creates new data points synthetically using a nearest neighbor approach. This way we can obtain a balanced dataset, without having repeated observations.
+SMOTE refers to Synthetic Minority Oversampling Technique, and it is another technique to oversample the minority class. Instead of simply duplicating the minority data which can lead to overfitting, SMOTE creates new data points synthetically using a nearest neighbor approach. This way, we can obtain a balanced dataset, without having repeated observations.
 
-To perform SMOTE, we use the SMOTE from the IMB Learn package. For SMOTE, the outcome class must be numeric, hence we convert ‘P3’ instances to 1 and ‘else’ to 0, and ensure they are of type integer. We then define a X pandas series as the Text column only, a Y pandas series as the Priority column only, and vectorize X.
+To perform SMOTE, we use the SMOTE from the IMB Learn package. For SMOTE, the outcome class must be numeric, hence we convert ‘P3’ instances to 1 and ‘else’ to 0, and ensure that they are of type integer. We then define a X pandas series as the `Text` column only, a Y pandas series as the `Priority` column only, and vectorize X.
 
 After these preprocessing steps, we instantiate SMOTE and apply its fit_resample method on the vectorized X and Y. This outcome is then split into our train and test datasets, still with a 20% held out test set and stratification to ensure the newly achieved class balance is maintained.
 
@@ -105,14 +89,11 @@ However, in this step we encountered failures with the KNN model. We failed to t
 
 ### Step 8: Conclusion
 
-Conducting these different experiences highlight the ineffectiveness of using a dummy classifier, which always predicts the majority class, and indicates the need to employ more sophisticated prediction models. 
+Before implementing any data adjustments to address class imbalance, the Gradient Boosting Classifier emerges as the top performer across all evaluated metrics. This highlights its inherent robustness and adaptability for handling diverse data distributions. This consistency may stem from Random Forest's inherent ability to handle complex datasets and mitigate overfitting, making it resilient to variations in the data distribution caused by oversampling. Additionally, Random Forest's ensemble nature, which combines multiple decision trees, allows it to capture diverse patterns and relationships within the data, enhancing its effectiveness in both oversampled scenarios.
 
-Before implementing any data adjustments to address class imbalance, the Gradient Boosting Classifier emerges as the top performer across all evaluated metrics. This highlights its inherent robustness and adaptability in handling diverse data distributions. However, when employing undersampling techniques, the Support Vector Machine (SVM) proves to have higher performance. This can be attributed to SVM's effectiveness to establish decision boundaries in reduced feature spaces, which suits the altered data distribution resulting from undersampling. 
-The oversampling technique, along with SMOTE (a type of over sampling), both demonstrate Random Forest as the top performer.
+However, when employing undersampling techniques, the Support Vector Machine (SVM) proves to have a higher performance. This can be attributed to SVM's effectiveness to establish decision boundaries in reduced feature spaces, which suits the altered data distribution resulting from undersampling. 
 
-The consistent performance of Random Forest as the top performer for both oversampling techniques, suggests that Random Forest is robust and adaptable to different data balancing strategies. This consistency may stem from Random Forest's inherent ability to handle complex datasets and mitigate overfitting, making it resilient to variations in the data distribution caused by oversampling. Additionally, Random Forest's ensemble nature, which combines multiple decision trees, allows it to capture diverse patterns and relationships within the data, enhancing its effectiveness in both oversampled scenarios.
-
-In implementing the various techniques to handle the class imbalance, it is evident that overall, the oversampling technique results in much higher performance compared to other methods. SMOTE, a more advanced form of oversampling, closely follows Over Sampling in terms of performance, aligning with the findings of Juez-Gil et al. (2021), which emphasized the effectiveness of simpler methods, such as Random-Over-Sampling in providing better results than complex ones, such as SMOTE.
+Another observation is that the oversampling technique results in much higher performance when compared to other methods. SMOTE, a more advanced form of oversampling, closely follows oversampling in terms of performance. This aligns well with the findings of Juez-Gil et al. (2021), which emphasized the effectiveness of simpler methods, such as Random-Over-Sampling in providing better results than complex ones, such as SMOTE.
 
 These results emphasize the importance of exploring different strategies for managing imbalanced data and emphasize the advantages of ensemble methods like Gradient Boosting and Random Forest, along with algorithm-level approaches such as adjusting misclassification costs and modifying decision thresholds, in addressing the challenges posed by imbalanced datasets.
 
