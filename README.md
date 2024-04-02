@@ -93,10 +93,7 @@ Before implementing any data adjustments to address class imbalance, the Gradien
 
 However, when employing undersampling techniques, the Support Vector Machine (SVM) proves to have a higher performance. This can be attributed to SVM's effectiveness to establish decision boundaries in reduced feature spaces, which suits the altered data distribution resulting from undersampling. 
 
-Another observation is that the oversampling technique results in much higher performance when compared to other methods. SMOTE, a more advanced form of oversampling, closely follows oversampling in terms of performance. This aligns well with the findings of Juez-Gil et al. (2021), which emphasized the effectiveness of simpler methods, such as Random-Over-Sampling in providing better results than complex ones, such as SMOTE.
-
-These results emphasize the importance of exploring different strategies for managing imbalanced data and emphasize the advantages of ensemble methods like Gradient Boosting and Random Forest, along with algorithm-level approaches such as adjusting misclassification costs and modifying decision thresholds, in addressing the challenges posed by imbalanced datasets.
-
+Another observation is that the oversampling technique results in much higher performance when compared to other methods. SMOTE, a more advanced form of oversampling, closely follows oversampling in terms of performance. This aligns well with the findings of Juez-Gil et al. (2021), who emphasized that simpler methods (such as Random-Over-Sampling) could often provide better results than more complex ones (such as SMOTE).
 
 
 ## Usage
