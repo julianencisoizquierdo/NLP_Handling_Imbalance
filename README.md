@@ -1,19 +1,15 @@
 # Handling an Imbalanced Dataset with NLP
 
 ## Content of the project
-We are working for the customer service team of a company in the airline industry. Our overarching goal is to benchmark against the competition by analyzing their tweets. We are provided with the dataset (`airline.csv`) and are tasked to answer the following four questions:
-1) What is the average length of a social customer service reply?
-2) What type of links were referenced most often? URL links, phone numbers or direct messages?
-3) How many people should be on a social media customer service team? 
-4) How many social replies are reasonable for a customer service representative to handle?
+We are expected to review the issue of an imbalanced dataset. 
 
 
 ## Instructions
-The main file used for the analysis is `airline.csv`. It contains the text of the tweet, as well as information about the days in which those tweets were written.
+The main file used for the analysis is `eclipse_jdt.csv`. 
 
 
 ## Rationale and Methodology
-For Case 2, we are expected to review the issue of an imbalanced dataset. We are provided with the eclipse_jdt.csv.
+
 
 ### Step 1: Recode the outcome into a binary variables
 
@@ -178,6 +174,6 @@ This project is not open-source, and it does not come with a specific open-sourc
 If you are interested in using or collaborating on this project, please send me an email to julian.enciso.izquierdo@gmail.com.
 
 ## Acknowledgments
-Special thanks to Jade, Julie, Abir and Aya for their collaboration.
+Special thanks to Jade and Julie for their collaboration.
 
 
