@@ -8,19 +8,20 @@ The dataset is imbalanced; the P3 type bugs amount to close to 90% of the cases.
 
 ## Instructions
 The main file used for the analysis is `eclipse_jdt.csv`. The columns contained there are:
-- Issue_id
-- Priority
-- Component
-- Duplicated_issue
-- Title	Description	Status
-- Resolution
-- Version
-- Created_time
-- Resolved_time
+- Issue_id: Unique identifier for each reported bug or issue.
+- Priority: The target variable. Indicates the type of bug (P1, P2, P3...)
+- Component: Indicates the specific category or type of issue reported.
+- Duplicated_issue: Indicates whether the reported bug is a duplicate of another issue.
+- Title: Brief description or title of the bug, summarizing its nature or impact.
+- Description: Detailed explanation of the bug.
+- Status: Current state or status of the bug (e.g., VERIFIED, RESOLVED, CLOSED).
+- Resolution: The action taken to resolve the bug (e.g., FIXED, WONTFIX).
+- Version: The version of the software in which the bug was reported.
+- Created_time: Date and time when the bug was reported or created.
+- Resolved_time: Date and time when the bug was resolved or closed.
 
 
 ## Rationale and Methodology
-
 
 ### Step 1: Recode the outcome into a binary variables
 
